@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useGameState, GameState, GameStatus } from '../store/game';
-import { generateGrids, generateFakeGrids } from '../utils';
+import { generateGrids, generateGridsState } from '../utils';
 
 interface GridProps {
   value: number;
@@ -26,10 +26,17 @@ const Grid = ({
   columnNumber,
   bombNumber
 }: GridProps) => {
-  const [gridState, setGridState] = useState<GridState>(GridState.default);
-  const { gameStart, gameOver, status, setGrids } = useGameState<GameState>(
-    state => state
-  );
+  // const [gridState, setGridState] = useState<GridState>(GridState.default);
+  const {
+    gameStart,
+    gameOver,
+    status,
+    setGrids,
+    gridsState,
+    updateGridsState
+  } = useGameState<GameState>(state => state);
+  console.log({ gridsState, rowNumber, columnNumber });
+  const gridState = gridsState[row][column];
 
   function onClick() {
     if (status === GameStatus.default) {
@@ -40,18 +47,18 @@ const Grid = ({
           columnNumber,
           bombNumber,
           rowNumber * row + column
-        )
+        ),
+        generateGridsState(rowNumber, columnNumber)
       );
     }
     switch (gridState) {
       case GridState.default: {
+        updateGridsState([{ row, column, state: GridState.opened }]);
         if (value === 9) {
           alert('Bomb');
-          setGridState(GridState.opened);
           gameOver();
           return;
         }
-        setGridState(GridState.opened);
       }
       case GridState.flagged:
       case GridState.question:
@@ -64,13 +71,13 @@ const Grid = ({
     e.preventDefault();
     switch (gridState) {
       case GridState.default:
-        setGridState(GridState.flagged);
+        updateGridsState([{ row, column, state: GridState.flagged }]);
         return;
       case GridState.flagged:
-        setGridState(GridState.question);
+        updateGridsState([{ row, column, state: GridState.question }]);
         return;
       case GridState.question:
-        setGridState(GridState.default);
+        updateGridsState([{ row, column, state: GridState.default }]);
         return;
       case GridState.opened:
         return;
@@ -94,7 +101,7 @@ const Grid = ({
 
   return (
     <div
-      className={`grid-cell select-none`}
+      className={`grid-cell select-none ${gridState === GridState.opened ? 'open' : ''}`}
       onDoubleClick={onDoubleClick}
       onClick={onClick}
       onContextMenu={onContextMenu}

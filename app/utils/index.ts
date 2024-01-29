@@ -1,3 +1,5 @@
+import { GridState } from '../store/game';
+
 export function getBombIndexList(
   totalGrid: number,
   bombNumber: number,
@@ -70,6 +72,12 @@ export function generateGrids(
   console.log(`Time used: ${Date.now() - start} ms`);
 
   return grid2d;
+}
+
+export function generateGridsState(rowNumber: number, columnNumber: number) {
+  return Array.from({ length: rowNumber }).map(e => {
+    return Array.from({ length: columnNumber }).fill(GridState.default);
+  }) as GridState[][];
 }
 
 export function floodFillGrids2D(

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useGameState, GameState, GameStatus } from '../store/game';
-import { generateFakeGrids } from '../utils';
+import { generateFakeGrids, generateGridsState } from '../utils';
 import Grid from './Grid';
 
 const boardClass: {
@@ -18,17 +18,17 @@ const GameBoard = () => {
   const { rowNumber, columnNumber } = modeData[mode];
 
   useEffect(() => {
-    setGrids(generateFakeGrids(rowNumber, columnNumber) as number[][]);
+    setGrids(
+      generateFakeGrids(rowNumber, columnNumber),
+      generateGridsState(rowNumber, columnNumber)
+    );
   }, [rowNumber, columnNumber]);
 
   return (
     <div className='p-3 flex justify-center items-center flex-1'>
       <div className=''>
         {grids.map((row, rowIndex) => (
-          <div
-            key={rowIndex}
-            className={`grid ${boardClass[columnNumber]} gap-px`}
-          >
+          <div key={rowIndex} className={`grid ${boardClass[columnNumber]}`}>
             {row.map((value, colIndex) => (
               <Grid
                 key={colIndex}

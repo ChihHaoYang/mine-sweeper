@@ -48,14 +48,17 @@ body {
 .grid-cell {
   width: 40px;
   height: 40px;
-  border: 1px solid #ccc;
+  border: 2px solid #333;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
   font-size: 18px;
   font-weight: bold;
-  border-radius: 4px;
+  background: radial-gradient(#7bd4ff, #5fabff);
+}
+
+.grid-cell.open {
+  background: radial-gradient(#ffffff, #cccccc);
 }
 
 .grid-cell:hover {
