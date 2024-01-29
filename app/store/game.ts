@@ -13,8 +13,16 @@ enum Mode {
   hard = 'hard'
 }
 
+export enum GridState {
+  default = 'default',
+  flagged = 'flagged',
+  question = 'question',
+  opened = 'opened'
+}
+
 export interface GameState {
   grids: number[][];
+  gridsState: GridState[][];
   status: GameStatus;
   mode: Mode;
   modeData: {
@@ -24,14 +32,23 @@ export interface GameState {
       bombNumber: number;
     };
   };
-  setGrids: (grid: number[][]) => void;
+  setGrids: (grid: number[][], gridsState?: GridState[][]) => void;
+  updateGridsState: (
+    gridsToUpdate: {
+      row: number;
+      column: number;
+      state: GridState;
+    }[]
+  ) => void;
   setMode: (mode: Mode) => void;
   gameStart: () => void;
   gameOver: () => void;
+  revealAllGrids: () => void;
 }
 
 export const useGameState = create<GameState>()(set => ({
   grids: [],
+  gridsState: [],
   status: GameStatus.default,
   mode: Mode.hard,
   modeData: {
@@ -51,8 +68,24 @@ export const useGameState = create<GameState>()(set => ({
       bombNumber: 99
     }
   },
-  setGrids: grids => set({ grids }),
+  setGrids: (grids, gridsState) => set({ grids, gridsState: gridsState || [] }),
+  updateGridsState: gridsToUpdate =>
+    set(state => {
+      const newState = [...state.gridsState];
+      gridsToUpdate.forEach(e => {
+        newState[e.row][e.column] = e.state;
+      });
+      return {
+        gridsState: newState
+      };
+    }),
   setMode: mode => set({ mode, status: GameStatus.default }),
   gameStart: () => set({ status: GameStatus.start }),
-  gameOver: () => set({ status: GameStatus.lose })
+  gameOver: () => set({ status: GameStatus.lose }),
+  revealAllGrids: () =>
+    set(state => ({
+      gridsState: [...state.gridsState].map(row => {
+        return row.map(col => GridState.opened);
+      })
+    }))
 }));
