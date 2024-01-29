@@ -44,14 +44,14 @@ export function generateGrids(
       grid1d[i] = 9;
     } else {
       grid1d[i] = [
-        -rowNumber - 1,
-        -rowNumber,
-        -rowNumber + 1,
-        -1,
-        1,
-        rowNumber - 1,
-        rowNumber,
-        rowNumber + 1
+        ...(col2d === 0 ? [] : [-columnNumber - 1]),
+        -columnNumber,
+        ...(col2d === columnNumber - 1 ? [] : [-columnNumber + 1]),
+        ...(col2d === 0 ? [] : [-1]),
+        ...(col2d === columnNumber - 1 ? [] : [1]),
+        ...(col2d === 0 ? [] : [columnNumber - 1]),
+        columnNumber,
+        ...(col2d === columnNumber - 1 ? [] : [columnNumber + 1])
       ].reduce((acc, current) => {
         if (bombIndexList.includes(i + current)) {
           acc++;
