@@ -58,7 +58,7 @@ body {
 }
 
 .grid-cell.open {
-  background: radial-gradient(#ffffff, #cccccc);
+  background: radial-gradient(#ffffff, #e5e5e5);
 }
 
 .grid-cell.flag {

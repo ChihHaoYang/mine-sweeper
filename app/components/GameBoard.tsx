@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect } from 'react';
 import { useGameState, GameState, GameStatus } from '../store/game';
 import {
   generateFakeGrids,
@@ -31,24 +31,28 @@ const GameBoard = () => {
   } = useGameState<GameState>(state => state);
   const { rowNumber, columnNumber, bombNumber } = modeData[mode];
 
-  console.log({ gridsState });
-
   useEffect(() => {
-    setGrids(
-      generateFakeGrids(rowNumber, columnNumber),
-      generateGridsState(rowNumber, columnNumber)
-    );
-  }, [rowNumber, columnNumber]);
+    if (status === GameStatus.initial) {
+      setGrids(
+        generateFakeGrids(rowNumber, columnNumber),
+        generateGridsState(rowNumber, columnNumber)
+      );
+    }
+    if (status === GameStatus.win) {
+      alert('You win');
+    }
+  }, [rowNumber, columnNumber, status]);
 
   function onLeftClick(row: number, column: number) {
     return (e: React.MouseEvent) => {
       // Early return if it's not default state no matter it started or not
+      const start = Date.now();
       const gridState = gridsState[row][column];
       if (gridState !== GridState.default) {
         return;
       }
 
-      if (status === GameStatus.default) {
+      if (status === GameStatus.initial) {
         gameStart();
         const grids = generateGrids(
           rowNumber,
@@ -77,7 +81,7 @@ const GameBoard = () => {
           updateGridsState([{ row, column, state: GridState.opened }]);
           console.log('Bomb');
           gameOver();
-          return;
+          break;
         case 0:
           const gridToBeOpened = getUpdateGridStateParamter(
             row,
@@ -86,16 +90,19 @@ const GameBoard = () => {
             gridsState
           );
           updateGridsState(gridToBeOpened);
-          return;
+          break;
         default:
           updateGridsState([{ row, column, state: GridState.opened }]);
-          return;
+          break;
       }
+
+      console.log(`onLeftClick takes: ${Date.now() - start} ms`);
     };
   }
 
   function onRightClick(row: number, column: number) {
     return (e: React.MouseEvent) => {
+      const start = Date.now();
       const gridState = gridsState[row][column];
       e.preventDefault();
       switch (gridState) {
@@ -111,12 +118,15 @@ const GameBoard = () => {
         case GridState.opened:
           return;
       }
+
+      console.log(`onRightClick takes: ${Date.now() - start} ms`);
     };
   }
 
   function onDoubleClick(row: number, column: number) {
     const value = grids[row][column];
     return (e: React.MouseEvent) => {
+      const start = Date.now();
       const grids = [
         [-1, -1],
         [-1, 0],
@@ -139,18 +149,13 @@ const GameBoard = () => {
       const toOpen = grids.filter(
         g => gridsState[g[0]][g[1]] === GridState.default
       );
-      // .map((g, index, arr) =>
-      //   getUpdateGridStateParamter(g[0], g[1], arr, gridsState)
-      // )
-      // .flat();
-      // .map(g => ({ row: g[0], column: g[1], state: GridState.opened }));
-      console.log({ value, flags, toOpen });
 
       if (flags < value) {
         return;
       }
       toOpen.forEach(g => onLeftClick(g[0], g[1])({} as React.MouseEvent));
-      // updateGridsState(toOpen);
+
+      console.log(`onDoubleClick takes: ${Date.now() - start} ms`);
     };
   }
 

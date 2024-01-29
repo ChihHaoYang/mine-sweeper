@@ -1,7 +1,8 @@
 import { create } from 'zustand';
 
 export enum GameStatus {
-  default,
+  mode,
+  initial,
   start,
   win,
   lose
@@ -43,13 +44,14 @@ export interface GameState {
   setMode: (mode: Mode) => void;
   gameStart: () => void;
   gameOver: () => void;
+  startNewGame: () => void;
   revealAllGrids: () => void;
 }
 
 export const useGameState = create<GameState>()(set => ({
   grids: [],
   gridsState: [],
-  status: GameStatus.default,
+  status: GameStatus.initial,
   mode: Mode.hard,
   modeData: {
     easy: {
@@ -65,23 +67,45 @@ export const useGameState = create<GameState>()(set => ({
     hard: {
       rowNumber: 16,
       columnNumber: 30,
-      bombNumber: 99
+      bombNumber: 80
     }
   },
   setGrids: (grids, gridsState) => set({ grids, gridsState: gridsState || [] }),
   updateGridsState: gridsToUpdate =>
     set(state => {
+      const { rowNumber, columnNumber, bombNumber } =
+        state.modeData[state.mode];
       const newState = [...state.gridsState];
       gridsToUpdate.forEach(e => {
         newState[e.row][e.column] = e.state;
       });
+
+      const isGameOver =
+        newState.flat().filter(e => e === GridState.opened).length ===
+        rowNumber * columnNumber - bombNumber;
+
       return {
-        gridsState: newState
+        gridsState: newState,
+        status: isGameOver ? GameStatus.win : state.status
       };
     }),
-  setMode: mode => set({ mode, status: GameStatus.default }),
+  setMode: mode => set({ mode, status: GameStatus.mode }),
   gameStart: () => set({ status: GameStatus.start }),
-  gameOver: () => set({ status: GameStatus.lose }),
+  gameOver: () =>
+    set(state => {
+      const { grids } = state;
+      const newState = [...state.gridsState].map((row, rowIndex) => {
+        return row.map((col, colIndex) => {
+          if (grids[rowIndex][colIndex] === 9) {
+            return GridState.opened;
+          }
+          return col;
+        });
+      });
+      return { status: GameStatus.lose, gridsState: newState };
+    }),
+  startNewGame: () =>
+    set({ status: GameStatus.initial, grids: [], gridsState: [] }),
   revealAllGrids: () =>
     set(state => ({
       gridsState: [...state.gridsState].map(row => {
