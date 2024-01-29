@@ -8,10 +8,11 @@ export enum GameStatus {
   lose
 }
 
-enum Mode {
+export enum Mode {
   easy = 'easy',
   normal = 'normal',
-  hard = 'hard'
+  hard = 'hard',
+  mobileHard = 'mobileHard'
 }
 
 export enum GridState {
@@ -42,7 +43,10 @@ export interface GameState {
     }[]
   ) => void;
   setMode: (mode: Mode) => void;
+  homepage: () => void;
+  initGame: () => void;
   gameStart: () => void;
+  gameWin: () => void;
   gameOver: () => void;
   startNewGame: () => void;
   revealAllGrids: () => void;
@@ -51,8 +55,8 @@ export interface GameState {
 export const useGameState = create<GameState>()(set => ({
   grids: [],
   gridsState: [],
-  status: GameStatus.initial,
-  mode: Mode.hard,
+  status: GameStatus.mode,
+  mode: Mode.normal,
   modeData: {
     easy: {
       rowNumber: 9,
@@ -68,6 +72,11 @@ export const useGameState = create<GameState>()(set => ({
       rowNumber: 16,
       columnNumber: 30,
       bombNumber: 80
+    },
+    mobileHard: {
+      rowNumber: 24,
+      columnNumber: 16,
+      bombNumber: 60
     }
   },
   setGrids: (grids, gridsState) => set({ grids, gridsState: gridsState || [] }),
@@ -90,7 +99,10 @@ export const useGameState = create<GameState>()(set => ({
       };
     }),
   setMode: mode => set({ mode, status: GameStatus.mode }),
+  initGame: () => set({ status: GameStatus.initial }),
+  homepage: () => set({ status: GameStatus.mode }),
   gameStart: () => set({ status: GameStatus.start }),
+  gameWin: () => set({ status: GameStatus.win }),
   gameOver: () =>
     set(state => {
       const { grids } = state;

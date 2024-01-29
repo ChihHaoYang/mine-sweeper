@@ -62,7 +62,7 @@ const Grid = ({
 
   return (
     <div
-      className={`grid-cell select-none ${getClassName()}`}
+      className={`grid-cell flex items-center font-bold justify-center text-base border-2 border-solid border-stone-700 w-7 h-7 sm:w-10 sm:h-10 sm:text-lg select-none ${getClassName()}`}
       onDoubleClick={onDoubleClick}
       onClick={onLeftClick}
       onContextMenu={onRightClick}

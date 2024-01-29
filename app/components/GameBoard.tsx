@@ -14,6 +14,7 @@ const boardClass: {
 } = {
   9: 'grid-cols-9',
   16: 'grid-cols-16',
+  24: 'grid-cols-24',
   30: 'grid-cols-30'
 };
 
@@ -37,9 +38,6 @@ const GameBoard = () => {
         generateFakeGrids(rowNumber, columnNumber),
         generateGridsState(rowNumber, columnNumber)
       );
-    }
-    if (status === GameStatus.win) {
-      alert('You win');
     }
   }, [rowNumber, columnNumber, status]);
 
@@ -79,7 +77,6 @@ const GameBoard = () => {
       switch (grids[row][column]) {
         case 9:
           updateGridsState([{ row, column, state: GridState.opened }]);
-          console.log('Bomb');
           gameOver();
           break;
         case 0:
@@ -160,27 +157,29 @@ const GameBoard = () => {
   }
 
   return (
-    <div className='p-3 flex justify-center items-center flex-1'>
-      <div className=''>
-        {grids.map((row, rowIndex) => (
-          <div key={rowIndex} className={`grid ${boardClass[columnNumber]}`}>
-            {row.map((value, colIndex) => (
-              <Grid
-                key={colIndex}
-                value={value}
-                row={rowIndex}
-                column={colIndex}
-                gridState={gridsState[rowIndex][colIndex]}
-                onLeftClick={onLeftClick(rowIndex, colIndex)}
-                onRightClick={onRightClick(rowIndex, colIndex)}
-                onDoubleClick={onDoubleClick(rowIndex, colIndex)}
-                {...modeData[mode]}
-              />
-            ))}
-          </div>
-        ))}
+    <>
+      <div className='p-3 flex justify-center items-center flex-1'>
+        <div>
+          {grids.map((row, rowIndex) => (
+            <div key={rowIndex} className={`grid ${boardClass[columnNumber]}`}>
+              {row.map((value, colIndex) => (
+                <Grid
+                  key={colIndex}
+                  value={value}
+                  row={rowIndex}
+                  column={colIndex}
+                  gridState={gridsState[rowIndex][colIndex]}
+                  onLeftClick={onLeftClick(rowIndex, colIndex)}
+                  onRightClick={onRightClick(rowIndex, colIndex)}
+                  onDoubleClick={onDoubleClick(rowIndex, colIndex)}
+                  {...modeData[mode]}
+                />
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
