@@ -1,15 +1,8 @@
 import { create } from 'zustand';
 
-enum GridType {
+export enum GameStatus {
   default,
-  numbered,
-  blank,
-  flagged,
-  question
-}
-
-enum GameStatus {
-  default,
+  start,
   win,
   lose
 }
@@ -21,7 +14,7 @@ enum Mode {
 }
 
 export interface GameState {
-  boardState: GridType[][];
+  grids: number[][];
   status: GameStatus;
   mode: Mode;
   modeData: {
@@ -31,11 +24,14 @@ export interface GameState {
       bombNumber: number;
     };
   };
+  setGrids: (grid: number[][]) => void;
   setMode: (mode: Mode) => void;
+  gameStart: () => void;
+  gameOver: () => void;
 }
 
 export const useGameState = create<GameState>()(set => ({
-  boardState: [],
+  grids: [],
   status: GameStatus.default,
   mode: Mode.hard,
   modeData: {
@@ -50,10 +46,13 @@ export const useGameState = create<GameState>()(set => ({
       bombNumber: 40
     },
     hard: {
-      rowNumber: 30,
-      columnNumber: 16,
+      rowNumber: 16,
+      columnNumber: 30,
       bombNumber: 99
     }
   },
-  setMode: mode => set({ mode })
+  setGrids: grids => set({ grids }),
+  setMode: mode => set({ mode, status: GameStatus.default }),
+  gameStart: () => set({ status: GameStatus.start }),
+  gameOver: () => set({ status: GameStatus.lose })
 }));

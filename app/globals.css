@@ -26,8 +26,52 @@ body {
     rgb(var(--background-start-rgb));
 }
 
+html,
+body {
+  width: 100vw;
+  height: 100vh;
+  overflow-x: hidden;
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+/* .grid-container {
+  display: grid;
+  grid-template-columns: repeat(10, 40px);
+  gap: 1px;
+} */
+
+.grid-cell {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 4px;
+}
+
+.grid-cell:hover {
+  background-color: #eee;
+}
+
+.mine {
+  background-color: #d9534f; /* Red background for mines */
+  color: #fff; /* White text for mines */
+}
+
+h1 {
+  text-align: center;
+}
+
+.container {
+  margin: auto;
+  width: 80%;
 }
