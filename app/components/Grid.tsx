@@ -1,6 +1,4 @@
-import React, { useState, useRef } from 'react';
-import { useGameState, GameState, GameStatus } from '../store/game';
-import { generateGrids, generateGridsState } from '../utils';
+import React from 'react';
 
 interface GridProps {
   value: number;
@@ -9,6 +7,10 @@ interface GridProps {
   rowNumber: number;
   columnNumber: number;
   bombNumber: number;
+  gridState: GridState;
+  onLeftClick: (e: React.MouseEvent) => void;
+  onRightClick: (e: React.MouseEvent) => void;
+  onDoubleClick: (e: React.MouseEvent) => void;
 }
 
 export enum GridState {
@@ -20,72 +22,11 @@ export enum GridState {
 
 const Grid = ({
   value,
-  row,
-  column,
-  rowNumber,
-  columnNumber,
-  bombNumber
+  gridState,
+  onLeftClick,
+  onRightClick,
+  onDoubleClick
 }: GridProps) => {
-  // const [gridState, setGridState] = useState<GridState>(GridState.default);
-  const {
-    gameStart,
-    gameOver,
-    status,
-    setGrids,
-    gridsState,
-    updateGridsState
-  } = useGameState<GameState>(state => state);
-  console.log({ gridsState, rowNumber, columnNumber });
-  const gridState = gridsState[row][column];
-
-  function onClick() {
-    if (status === GameStatus.default) {
-      gameStart();
-      setGrids(
-        generateGrids(
-          rowNumber,
-          columnNumber,
-          bombNumber,
-          rowNumber * row + column
-        ),
-        generateGridsState(rowNumber, columnNumber)
-      );
-    }
-    switch (gridState) {
-      case GridState.default: {
-        updateGridsState([{ row, column, state: GridState.opened }]);
-        if (value === 9) {
-          alert('Bomb');
-          gameOver();
-          return;
-        }
-      }
-      case GridState.flagged:
-      case GridState.question:
-      case GridState.opened:
-        return;
-    }
-  }
-
-  function onContextMenu(e: React.MouseEvent) {
-    e.preventDefault();
-    switch (gridState) {
-      case GridState.default:
-        updateGridsState([{ row, column, state: GridState.flagged }]);
-        return;
-      case GridState.flagged:
-        updateGridsState([{ row, column, state: GridState.question }]);
-        return;
-      case GridState.question:
-        updateGridsState([{ row, column, state: GridState.default }]);
-        return;
-      case GridState.opened:
-        return;
-    }
-  }
-
-  function onDoubleClick() {}
-
   const renderGrid = () => {
     switch (gridState) {
       case GridState.default:
@@ -93,18 +34,38 @@ const Grid = ({
       case GridState.flagged:
         return '🚩';
       case GridState.question:
-        return '❓';
+        return '❔';
       case GridState.opened:
-        return value === 9 ? '💣' : value;
+        switch (value) {
+          case 0:
+            return '';
+          case 9:
+            return '💣';
+          default:
+            return value;
+        }
+    }
+  };
+
+  const getClassName = () => {
+    switch (gridState) {
+      case GridState.opened:
+        return 'open';
+      case GridState.flagged:
+        return 'flag';
+      case GridState.question:
+        return 'question';
+      case GridState.default:
+        return '';
     }
   };
 
   return (
     <div
-      className={`grid-cell select-none ${gridState === GridState.opened ? 'open' : ''}`}
+      className={`grid-cell select-none ${getClassName()}`}
       onDoubleClick={onDoubleClick}
-      onClick={onClick}
-      onContextMenu={onContextMenu}
+      onClick={onLeftClick}
+      onContextMenu={onRightClick}
     >
       {renderGrid()}
     </div>

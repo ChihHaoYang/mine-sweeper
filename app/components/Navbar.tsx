@@ -9,7 +9,7 @@ const Navbar = () => {
       <div className='max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4'>
         <a href='#' className='flex items-center space-x-3 rtl:space-x-reverse'>
           <span className='self-center flex text-2xl font-semibold whitespace-nowrap dark:text-white'>
-            💣 <span className='hidden w-full md:w-auto'>Mine Sweeper</span>
+            💣 Mine Sweeper
           </span>
         </a>
         <Menu as='div' className='relative inline-block text-left'>

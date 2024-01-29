@@ -80,22 +80,74 @@ export function generateGridsState(rowNumber: number, columnNumber: number) {
   }) as GridState[][];
 }
 
-export function floodFillGrids2D(
+export function getGridsToBeOpened(
   row: number,
   col: number,
   state: number[][],
-  result: string[]
+  result: {
+    [row: number]: {
+      [column: number]: boolean;
+    };
+  }
 ) {
+  // Flood Fill algorithm
   const isValid =
     row >= 0 && row < state.length && col >= 0 && col < state[row].length;
-  console.log({ row, col, isValid });
-  if (isValid && state[row][col] === 0 && !result.includes(`${row}-${col}`)) {
-    result.push(`${row}-${col}`);
-    floodFillGrids2D(row + 1, col, state, result);
-    floodFillGrids2D(row - 1, col, state, result);
-    floodFillGrids2D(row, col - 1, state, result);
-    floodFillGrids2D(row, col + 1, state, result);
+  if (isValid) {
+    const value = state[row][col];
+    if (!result[row] || !result[row][col]) {
+      if (!result[row]) {
+        result[row] = {};
+      }
+      result[row][col] = true;
+      if (value !== 0) {
+        return;
+      }
+      getGridsToBeOpened(row - 1, col - 1, state, result);
+      getGridsToBeOpened(row - 1, col, state, result);
+      getGridsToBeOpened(row - 1, col + 1, state, result);
+      getGridsToBeOpened(row, col - 1, state, result);
+      getGridsToBeOpened(row, col + 1, state, result);
+      getGridsToBeOpened(row + 1, col - 1, state, result);
+      getGridsToBeOpened(row + 1, col, state, result);
+      getGridsToBeOpened(row + 1, col + 1, state, result);
+    }
   } else {
     return;
   }
+}
+
+export function getUpdateGridStateParamter(
+  row: number,
+  col: number,
+  state: number[][],
+  gridsState: GridState[][]
+) {
+  const result: {
+    [row: number]: {
+      [col: number]: boolean;
+    };
+  } = {};
+  getGridsToBeOpened(row, col, state, result);
+
+  return (Object.keys(result) as Array<unknown>).reduce(
+    (
+      acc: {
+        row: number;
+        column: number;
+        state: GridState;
+      }[],
+      r
+    ) => {
+      const row = r as number;
+      (Object.keys(result[row]) as Array<unknown>).forEach(c => {
+        const column = c as number;
+        if (gridsState[row][c as number] === GridState.default) {
+          acc.push({ row, column, state: GridState.opened });
+        }
+      });
+      return acc;
+    },
+    []
+  );
 }

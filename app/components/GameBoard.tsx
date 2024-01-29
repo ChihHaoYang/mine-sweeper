@@ -1,7 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useGameState, GameState, GameStatus } from '../store/game';
-import { generateFakeGrids, generateGridsState } from '../utils';
-import Grid from './Grid';
+import {
+  generateFakeGrids,
+  generateGrids,
+  generateGridsState,
+  getGridsToBeOpened,
+  getUpdateGridStateParamter
+} from '../utils';
+import Grid, { GridState } from './Grid';
 
 const boardClass: {
   [key: number]: string;
@@ -12,10 +18,20 @@ const boardClass: {
 };
 
 const GameBoard = () => {
-  const { modeData, mode, grids, setGrids } = useGameState<GameState>(
-    state => state
-  );
-  const { rowNumber, columnNumber } = modeData[mode];
+  const {
+    modeData,
+    mode,
+    gameOver,
+    grids,
+    setGrids,
+    gridsState,
+    updateGridsState,
+    gameStart,
+    status
+  } = useGameState<GameState>(state => state);
+  const { rowNumber, columnNumber, bombNumber } = modeData[mode];
+
+  console.log({ gridsState });
 
   useEffect(() => {
     setGrids(
@@ -23,6 +39,120 @@ const GameBoard = () => {
       generateGridsState(rowNumber, columnNumber)
     );
   }, [rowNumber, columnNumber]);
+
+  function onLeftClick(row: number, column: number) {
+    return (e: React.MouseEvent) => {
+      // Early return if it's not default state no matter it started or not
+      const gridState = gridsState[row][column];
+      if (gridState !== GridState.default) {
+        return;
+      }
+
+      if (status === GameStatus.default) {
+        gameStart();
+        const grids = generateGrids(
+          rowNumber,
+          columnNumber,
+          bombNumber,
+          rowNumber * row + column
+        );
+        const initialGridsState = generateGridsState(rowNumber, columnNumber);
+        const toOpen = getUpdateGridStateParamter(
+          row,
+          column,
+          grids,
+          initialGridsState
+        );
+        toOpen.forEach(s => {
+          initialGridsState[s.row][s.column] = s.state;
+        });
+        setGrids(grids, initialGridsState);
+        return;
+      }
+
+      const result = {};
+      getGridsToBeOpened(row, column, grids, result);
+      switch (grids[row][column]) {
+        case 9:
+          updateGridsState([{ row, column, state: GridState.opened }]);
+          console.log('Bomb');
+          gameOver();
+          return;
+        case 0:
+          const gridToBeOpened = getUpdateGridStateParamter(
+            row,
+            column,
+            grids,
+            gridsState
+          );
+          updateGridsState(gridToBeOpened);
+          return;
+        default:
+          updateGridsState([{ row, column, state: GridState.opened }]);
+          return;
+      }
+    };
+  }
+
+  function onRightClick(row: number, column: number) {
+    return (e: React.MouseEvent) => {
+      const gridState = gridsState[row][column];
+      e.preventDefault();
+      switch (gridState) {
+        case GridState.default:
+          updateGridsState([{ row, column, state: GridState.flagged }]);
+          return;
+        case GridState.flagged:
+          updateGridsState([{ row, column, state: GridState.question }]);
+          return;
+        case GridState.question:
+          updateGridsState([{ row, column, state: GridState.default }]);
+          return;
+        case GridState.opened:
+          return;
+      }
+    };
+  }
+
+  function onDoubleClick(row: number, column: number) {
+    const value = grids[row][column];
+    return (e: React.MouseEvent) => {
+      const grids = [
+        [-1, -1],
+        [-1, 0],
+        [-1, 1],
+        [0, -1],
+        [0, 1],
+        [1, -1],
+        [1, 0],
+        [1, 1]
+      ]
+        .map(coord => {
+          return [row + coord[0], column + coord[1]];
+        })
+        .filter(
+          g => g[0] >= 0 && g[0] < rowNumber && g[1] >= 0 && g[1] < columnNumber
+        );
+      const flags = grids.filter(
+        g => gridsState[g[0]][g[1]] === GridState.flagged
+      ).length;
+      const toOpen = grids.filter(
+        g => gridsState[g[0]][g[1]] === GridState.default
+      );
+      // .map((g, index, arr) =>
+      //   getUpdateGridStateParamter(g[0], g[1], arr, gridsState)
+      // )
+      // .flat();
+      // .map(g => ({ row: g[0], column: g[1], state: GridState.opened }));
+      console.log({ value, flags, toOpen });
+
+      if (flags < value) {
+        return;
+      }
+      toOpen.forEach(g => onLeftClick(g[0], g[1])({} as React.MouseEvent));
+      // updateGridsState(toOpen);
+    };
+  }
 
   return (
     <div className='p-3 flex justify-center items-center flex-1'>
@@ -35,6 +165,10 @@ const GameBoard = () => {
                 value={value}
                 row={rowIndex}
                 column={colIndex}
+                gridState={gridsState[rowIndex][colIndex]}
+                onLeftClick={onLeftClick(rowIndex, colIndex)}
+                onRightClick={onRightClick(rowIndex, colIndex)}
+                onDoubleClick={onDoubleClick(rowIndex, colIndex)}
                 {...modeData[mode]}
               />
             ))}

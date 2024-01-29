@@ -61,6 +61,16 @@ body {
   background: radial-gradient(#ffffff, #cccccc);
 }
 
+.grid-cell.flag {
+  background: radial-gradient(#ffe357, #f7bb16);
+}
+
+
+.grid-cell.question {
+  background: radial-gradient(#aaef3e, #8bc654);
+}
+
+
 .grid-cell:hover {
   background-color: #eee;
 }
