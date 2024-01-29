@@ -30,7 +30,7 @@ const GameBoard = () => {
     gameStart,
     status
   } = useGameState<GameState>(state => state);
-  const { rowNumber, columnNumber, bombNumber } = modeData[mode];
+  const { rowNumber, columnNumber, mineNumber } = modeData[mode];
 
   useEffect(() => {
     if (status === GameStatus.initial) {
@@ -55,7 +55,7 @@ const GameBoard = () => {
         const grids = generateGrids(
           rowNumber,
           columnNumber,
-          bombNumber,
+          mineNumber,
           rowNumber * row + column
         );
         const initialGridsState = generateGridsState(rowNumber, columnNumber);

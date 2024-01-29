@@ -31,7 +31,7 @@ export interface GameState {
     [mode in Mode]: {
       rowNumber: number;
       columnNumber: number;
-      bombNumber: number;
+      mineNumber: number;
     };
   };
   setGrids: (grid: number[][], gridsState?: GridState[][]) => void;
@@ -61,28 +61,28 @@ export const useGameState = create<GameState>()(set => ({
     easy: {
       rowNumber: 9,
       columnNumber: 9,
-      bombNumber: 10
+      mineNumber: 10
     },
     normal: {
       rowNumber: 16,
       columnNumber: 16,
-      bombNumber: 40
+      mineNumber: 40
     },
     hard: {
       rowNumber: 16,
       columnNumber: 30,
-      bombNumber: 80
+      mineNumber: 80
     },
     mobileHard: {
       rowNumber: 24,
       columnNumber: 16,
-      bombNumber: 60
+      mineNumber: 60
     }
   },
   setGrids: (grids, gridsState) => set({ grids, gridsState: gridsState || [] }),
   updateGridsState: gridsToUpdate =>
     set(state => {
-      const { rowNumber, columnNumber, bombNumber } =
+      const { rowNumber, columnNumber, mineNumber } =
         state.modeData[state.mode];
       const newState = [...state.gridsState];
       gridsToUpdate.forEach(e => {
@@ -91,7 +91,7 @@ export const useGameState = create<GameState>()(set => ({
 
       const isGameOver =
         newState.flat().filter(e => e === GridState.opened).length ===
-        rowNumber * columnNumber - bombNumber;
+        rowNumber * columnNumber - mineNumber;
 
       return {
         gridsState: newState,

@@ -12,7 +12,7 @@ const LoseDialog = ({ startNewGame, homepage }: DialogContentProps) => {
         Boooom!
       </Dialog.Title>
       <Dialog.Description className='mt-2 text-sm text-gray-500'>
-        You clicked a bomb! 😵😵😵
+        You clicked a mine! 😵😵😵
       </Dialog.Description>
       <Dialog.Description className='text-sm text-gray-500'>
         Do you want to try again?

@@ -1,15 +1,15 @@
 import { describe } from 'node:test';
-import { generateGrids, getBombIndexList, floodFillGrids2D } from './index';
+import { generateGrids, getMineIndexList, getGridsToBeOpened } from './index';
 
-describe('getBombIndexList', () => {
+describe('getMineIndexList', () => {
   const grids = 150;
-  const bombNum = 15;
-  it('should return correct size of bombs with no duplicated index', () => {
-    const bombs = getBombIndexList(grids, bombNum);
+  const mineNum = 15;
+  it('should return correct size of mines with no duplicated index', () => {
+    const mines = getMineIndexList(grids, mineNum);
     let hasDuplicatedNumber = false;
-    expect(bombs.length).toEqual(bombNum);
-    for (let i = 0; i < bombs.length - 1; i++) {
-      if (bombs[i] === bombs[i + 1]) {
+    expect(mines.length).toEqual(mineNum);
+    for (let i = 0; i < mines.length - 1; i++) {
+      if (mines[i] === mines[i + 1]) {
         hasDuplicatedNumber = true;
       }
     }
@@ -18,20 +18,20 @@ describe('getBombIndexList', () => {
 
   it('should avoid specific index ', () => {
     const avoid = 10;
-    const bombs = getBombIndexList(grids, bombNum, avoid);
-    expect(bombs.includes(avoid)).toEqual(false);
+    const mines = getMineIndexList(grids, mineNum, avoid);
+    expect(mines.includes(avoid)).toEqual(false);
   });
 });
 
 describe('generateGrids', () => {
   const rows = 10;
   const columns = 10;
-  const bombs = 30;
-  it('should return correct 2d array from arguments and contains correct number of bombs', () => {
-    const grids = generateGrids(rows, columns, bombs);
+  const mines = 30;
+  it('should return correct 2d array from arguments and contains correct number of mines', () => {
+    const grids = generateGrids(rows, columns, mines);
     expect(grids.length).toEqual(rows);
     expect(grids[0].length).toEqual(columns);
-    expect([...grids].flat().filter(e => e === 9).length).toEqual(bombs);
+    expect([...grids].flat().filter(e => e === 9).length).toEqual(mines);
   });
 });
 

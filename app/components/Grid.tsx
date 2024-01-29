@@ -6,7 +6,7 @@ interface GridProps {
   column: number;
   rowNumber: number;
   columnNumber: number;
-  bombNumber: number;
+  mineNumber: number;
   gridState: GridState;
   onLeftClick: (e: React.MouseEvent) => void;
   onRightClick: (e: React.MouseEvent) => void;

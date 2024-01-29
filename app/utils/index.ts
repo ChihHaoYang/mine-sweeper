@@ -1,8 +1,8 @@
 import { GridState } from '../store/game';
 
-export function getBombIndexList(
+export function getMineIndexList(
   totalGrid: number,
-  bombNumber: number,
+  mineNumber: number,
   avoidIndex?: number
 ) {
   function shuffleArray(arr: number[]) {
@@ -17,7 +17,7 @@ export function getBombIndexList(
       avoidIndex !== undefined ? e !== avoidIndex : true
     )
   );
-  return shuffledArray.slice(0, bombNumber).sort((a, b) => a - b);
+  return shuffledArray.slice(0, mineNumber).sort((a, b) => a - b);
 }
 
 export function generateFakeGrids(rowNumber: number, columnNumber: number) {
@@ -29,20 +29,20 @@ export function generateFakeGrids(rowNumber: number, columnNumber: number) {
 export function generateGrids(
   rowNumber: number,
   columnNumber: number,
-  bombNumber: number,
+  mineNumber: number,
   avoidIndex?: number
 ) {
   const start = Date.now();
   const total = rowNumber * columnNumber;
   const grid1d = Array(total);
   const grid2d: number[][] = [];
-  const bombIndexList = getBombIndexList(total, bombNumber, avoidIndex);
+  const mineIndexList = getMineIndexList(total, mineNumber, avoidIndex);
 
-  // Put values into the grid: 0: white, 1~8: grid nearby bombs, 9: bomb
+  // Put values into the grid: 0: white, 1~8: grid nearby mines, 9: mine
   for (let i = 0; i < total; i++) {
     const row2d = Math.floor(i / columnNumber);
     const col2d = i % columnNumber;
-    if (bombIndexList.includes(i)) {
+    if (mineIndexList.includes(i)) {
       grid1d[i] = 9;
     } else {
       grid1d[i] = [
@@ -55,7 +55,7 @@ export function generateGrids(
         columnNumber,
         ...(col2d === columnNumber - 1 ? [] : [columnNumber + 1])
       ].reduce((acc, current) => {
-        if (bombIndexList.includes(i + current)) {
+        if (mineIndexList.includes(i + current)) {
           acc++;
         }
         return acc;
