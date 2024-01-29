@@ -21,7 +21,7 @@ export function getBombIndexList(
 export function generateFakeGrids(rowNumber: number, columnNumber: number) {
   return Array.from({ length: rowNumber }).map(e => {
     return Array.from({ length: columnNumber }).fill(0);
-  });
+  }) as number[][];
 }
 
 export function generateGrids(
