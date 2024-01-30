@@ -108,7 +108,8 @@ export const useGameState = create<GameState>()(set => ({
       const { grids } = state;
       const newState = [...state.gridsState].map((row, rowIndex) => {
         return row.map((col, colIndex) => {
-          if (grids[rowIndex][colIndex] === 9) {
+          // Reveal all mines not flagged
+          if (grids[rowIndex][colIndex] === 9 && col !== GridState.flagged) {
             return GridState.opened;
           }
           return col;
