@@ -14,7 +14,8 @@ export enum GridState {
   question = 'question',
   opened = 'opened'
 }
-const TEXT_CLASS_MAP: {
+
+export const TEXT_CLASS_MAP: {
   [value: number]: string;
 } = {
   1: 'text-sky-500',
@@ -68,6 +69,7 @@ const Grid = ({
 
   return (
     <div
+      data-testid='grid'
       className={`grid-cell flex items-center font-bold justify-center text-base border-2 border-solid border-stone-700 w-7 h-7 sm:w-10 sm:h-10 sm:text-lg select-none ${textClass} ${stateClass}`}
       onDoubleClick={onDoubleClick}
       onClick={onLeftClick}
