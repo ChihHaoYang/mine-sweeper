@@ -19,6 +19,27 @@ export enum GridState {
   question = 'question',
   opened = 'opened'
 }
+const TEXT_CLASS_MAP: {
+  [value: number]: string;
+} = {
+  1: 'text-sky-500',
+  2: 'text-teal-900',
+  3: 'text-red-600',
+  4: 'text-blue-700',
+  5: 'text-pink-950',
+  6: 'text-sky-700',
+  7: 'text-violet-700',
+  8: 'text-rose-950'
+};
+
+const STATE_CLASS_MAP: {
+  [key in GridState]: string;
+} = {
+  [GridState.default]: '',
+  [GridState.opened]: 'open',
+  [GridState.flagged]: 'flag',
+  [GridState.question]: 'question'
+};
 
 const Grid = ({
   value,
@@ -47,22 +68,12 @@ const Grid = ({
     }
   };
 
-  const getClassName = () => {
-    switch (gridState) {
-      case GridState.opened:
-        return 'open';
-      case GridState.flagged:
-        return 'flag';
-      case GridState.question:
-        return 'question';
-      case GridState.default:
-        return '';
-    }
-  };
+  const textClass = TEXT_CLASS_MAP[value] || '';
+  const stateClass = STATE_CLASS_MAP[gridState];
 
   return (
     <div
-      className={`grid-cell flex items-center font-bold justify-center text-base border-2 border-solid border-stone-700 w-7 h-7 sm:w-10 sm:h-10 sm:text-lg select-none ${getClassName()}`}
+      className={`grid-cell flex items-center font-bold justify-center text-base border-2 border-solid border-stone-700 w-7 h-7 sm:w-10 sm:h-10 sm:text-lg select-none ${textClass} ${stateClass}`}
       onDoubleClick={onDoubleClick}
       onClick={onLeftClick}
       onContextMenu={onRightClick}
