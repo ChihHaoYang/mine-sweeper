@@ -166,8 +166,6 @@ const GameBoard = () => {
                 <Grid
                   key={colIndex}
                   value={value}
-                  row={rowIndex}
-                  column={colIndex}
                   gridState={gridsState[rowIndex][colIndex]}
                   onLeftClick={onLeftClick(rowIndex, colIndex)}
                   onRightClick={onRightClick(rowIndex, colIndex)}

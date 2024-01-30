@@ -2,11 +2,6 @@ import React from 'react';
 
 interface GridProps {
   value: number;
-  row: number;
-  column: number;
-  rowNumber: number;
-  columnNumber: number;
-  mineNumber: number;
   gridState: GridState;
   onLeftClick: (e: React.MouseEvent) => void;
   onRightClick: (e: React.MouseEvent) => void;
