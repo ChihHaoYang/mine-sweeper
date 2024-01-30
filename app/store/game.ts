@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { generateGridsState } from '../utils';
 
 export enum GameStatus {
   mode,
@@ -118,7 +119,11 @@ export const useGameState = create<GameState>()(set => ({
       return { status: GameStatus.lose, gridsState: newState };
     }),
   startNewGame: () =>
-    set({ status: GameStatus.initial, grids: [], gridsState: [] }),
+    set(state => {
+      const { rowNumber, columnNumber } = state.modeData[state.mode];
+      const gridsState = generateGridsState(rowNumber, columnNumber);
+      return { status: GameStatus.initial, gridsState };
+    }),
   revealAllGrids: () =>
     set(state => ({
       gridsState: [...state.gridsState].map(row => {
