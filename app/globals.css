@@ -60,12 +60,3 @@ body {
 .grid-cell.question {
   background: radial-gradient(#aaef3e, #8bc654);
 }
-
-h1 {
-  text-align: center;
-}
-
-.container {
-  margin: auto;
-  width: 80%;
-}
