@@ -3,18 +3,10 @@ import { Menu, Transition } from '@headlessui/react';
 import { HiMenu } from 'react-icons/hi';
 import { useGameState, GameState, GameStatus, GridState } from '../store/game';
 import Counter from './Counter';
-// import { } from 'next/link';
 
 const Navbar = () => {
-  const {
-    revealAllGrids,
-    startNewGame,
-    status,
-    homepage,
-    gridsState,
-    mode,
-    modeData
-  } = useGameState<GameState>(state => state);
+  const { startNewGame, status, homepage, gridsState, mode, modeData } =
+    useGameState<GameState>(state => state);
 
   const { mineNumber } = modeData[mode];
   const flaggedGrid = gridsState.reduce((acc, current) => {
@@ -29,12 +21,6 @@ const Navbar = () => {
           <Counter />
         </div>
       );
-    }
-  };
-
-  const renderRemainingMines = () => {
-    if (status !== GameStatus.mode) {
-      return <div>💣 {mineNumber - flaggedGrid}</div>;
     }
   };
 
