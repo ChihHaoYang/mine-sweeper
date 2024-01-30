@@ -1,4 +1,3 @@
-import { describe } from 'node:test';
 import { generateGrids, getMineIndexList, getGridsToBeOpened } from './index';
 
 describe('getMineIndexList', () => {
@@ -35,18 +34,49 @@ describe('generateGrids', () => {
   });
 });
 
-describe('floodFillGrids2D', () => {
-  // **00
-  // *310
-  // 1100
-  // 0000
-  const state = [
-    [9, 9, 0, 0],
-    [9, 3, 1, 0],
-    [1, 1, 0, 0],
-    [0, 0, 0, 0]
-  ];
-  const gridsToOpen: string[] = [];
-  floodFillGrids2D(2, 2, state, gridsToOpen);
-  console.log(gridsToOpen);
+describe('getGridsToBeOpened', () => {
+  it('should not open r0c0 and r1c0 for clicking r2c2', () => {
+    // **00
+    // *310
+    // 1100
+    // 0000
+    const state = [
+      [9, 9, 0, 0],
+      [9, 3, 1, 0],
+      [1, 1, 0, 0],
+      [0, 0, 0, 0]
+    ];
+    const gridsToOpen: {
+      [row: number]: {
+        [col: number]: boolean;
+      };
+    } = {};
+    getGridsToBeOpened(2, 2, state, gridsToOpen);
+    expect(gridsToOpen[0][0]).not.toEqual(true);
+    expect(gridsToOpen[1][0]).not.toEqual(true);
+  });
+
+  it('should open r2c0, r3c0, r2c1, r3c1 when clicking r3c0', () => {
+    // *011
+    // *21*
+    // 1222
+    // 01*1
+    const state = [
+      [9, 0, 1, 1],
+      [9, 2, 1, 9],
+      [1, 2, 2, 2],
+      [0, 1, 9, 1]
+    ];
+
+    const gridsToOpen: {
+      [row: number]: {
+        [col: number]: boolean;
+      };
+    } = {};
+    getGridsToBeOpened(3, 0, state, gridsToOpen);
+    expect(gridsToOpen[2][0]).toEqual(true);
+    expect(gridsToOpen[3][0]).toEqual(true);
+    expect(gridsToOpen[2][1]).toEqual(true);
+    expect(gridsToOpen[3][1]).toEqual(true);
+  });
 });
