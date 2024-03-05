@@ -147,7 +147,7 @@ const GameBoard = () => {
         g => gridsState[g[0]][g[1]] === GridState.default
       );
 
-      if (flags < value) {
+      if (flags !== value) {
         return;
       }
       toOpen.forEach(g => onLeftClick(g[0], g[1])({} as React.MouseEvent));
