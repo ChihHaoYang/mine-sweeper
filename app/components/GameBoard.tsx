@@ -56,7 +56,7 @@ const GameBoard = () => {
           rowNumber,
           columnNumber,
           mineNumber,
-          rowNumber * row + column
+          columnNumber * row + column
         );
         const initialGridsState = [...gridsState.map(e => [...e])];
         const toOpen = getUpdateGridStateParamter(
