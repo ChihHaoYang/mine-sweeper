@@ -1,3 +1,11 @@
+# Mine sweeper game
+
+![image](https://github.com/ChihHaoYang/mine-sweeper/assets/5263586/ef3f398c-a65c-416e-9520-3c2be166af53)
+
+![image](https://github.com/ChihHaoYang/mine-sweeper/assets/5263586/97a5e9fe-3a07-40ac-adfe-b33ab455023f)
+
+
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
